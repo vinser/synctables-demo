@@ -3,7 +3,6 @@ package main // import "fyne.io/fyne/v2/container"
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -79,7 +78,7 @@ func (t *BorderedTable) CreateRenderer() fyne.WidgetRenderer {
 
 	return &boderedTableRenderer{
 		borderedTable: t,
-		container:     container.New(layout.NewBorderedTableLayout(top, left, joint, data), o...),
+		container:     container.New(NewBorderedTableLayout(top, left, joint, data), o...),
 	}
 }
 

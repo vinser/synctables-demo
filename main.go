@@ -48,7 +48,7 @@ func main() {
 	})
 
 	content := container.NewBorder(
-		container.NewVBox(widget.NewLabel("To see the fyne magic just chhose layout and pull scrollbar :)"), container.NewHBox(b1, b2, b3, b4)),
+		container.NewVBox(widget.NewLabel("To see the Fyne magic just choose layout and pull scrollbar :)"), container.NewHBox(b1, b2, b3, b4)),
 		nil,
 		nil,
 		nil,
