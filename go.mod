@@ -1,11 +1,14 @@
-module t_fyne
+module synctables
 
 go 1.20
 
-require fyne.io/fyne/v2 v2.3.1
-
 // replace fyne.io/fyne/v2 v2.3.1 => fyne.io/fyne/v2 v2.3.1-rc2.0.20230316124442-319ee4d58bed
-replace fyne.io/fyne/v2 v2.3.1 => ../fyne
+
+// replace fyne.io/fyne/v2 v2.3.1 => ../fyne
+
+replace fyne.io/fyne/v2 v2.3.1 => github.com/vinser/fyne/v2 v2.3.1-rc2.0.20230319083008-4de40b691c3b
+
+require fyne.io/fyne/v2 v2.3.1
 
 require (
 	fyne.io/systray v1.10.1-0.20230312215936-7f71b037e260 // indirect
