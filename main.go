@@ -14,45 +14,54 @@ func main() {
 	a := app.New()
 	w := a.NewWindow("Table scroll synchronisation demo")
 
-	c1 := NewBoderedTable(top(), left(), joint(), data())
-	c2 := NewBoderedTable(top(), nil, nil, data())
-	c3 := NewBoderedTable(nil, left(), joint(), data())
-	c4 := NewBoderedTable(nil, nil, nil, data())
-	c2.Hide()
-	c3.Hide()
-	c4.Hide()
-
-	b1 := widget.NewButton("Header and First column", func() {
-		c1.Show()
-		c2.Hide()
-		c3.Hide()
-		c4.Hide()
+	buttonName := []string{"Header and First column", "Header", "First column", "Plain"}
+	table := []*BorderedTable{}
+	for i := 0; i < len(buttonName); i++ {
+		table = append(table, NewBoderedTable(top(i), left(i), joint(i), data(i)))
+		if i != 0 {
+			table[i].Hide()
+		}
+	}
+	funcs := []func(){}
+	funcs = append(funcs, func() {
+		table[0].Show()
+		table[1].Hide()
+		table[2].Hide()
+		table[3].Hide()
 	})
-	b2 := widget.NewButton("Header", func() {
-		c1.Hide()
-		c2.Show()
-		c3.Hide()
-		c4.Hide()
+	funcs = append(funcs, func() {
+		table[0].Hide()
+		table[1].Show()
+		table[2].Hide()
+		table[3].Hide()
 	})
-	b3 := widget.NewButton("First column", func() {
-		c1.Hide()
-		c2.Hide()
-		c3.Show()
-		c4.Hide()
+	funcs = append(funcs, func() {
+		table[0].Hide()
+		table[1].Hide()
+		table[2].Show()
+		table[3].Hide()
 	})
-	b4 := widget.NewButton("Plain", func() {
-		c1.Hide()
-		c2.Hide()
-		c3.Hide()
-		c4.Show()
+	funcs = append(funcs, func() {
+		table[0].Hide()
+		table[1].Hide()
+		table[2].Hide()
+		table[3].Show()
 	})
+	button := []*widget.Button{}
+	for i := 0; i < len(buttonName); i++ {
+		button = append(button,
+			widget.NewButton(buttonName[i], funcs[i]))
+	}
 
 	content := container.NewBorder(
-		container.NewVBox(widget.NewLabel("To see the Fyne magic just choose layout and pull scrollbar :)"), container.NewHBox(b1, b2, b3, b4)),
+		container.NewVBox(
+			widget.NewLabel("To see the Fyne magic just choose layout and pull scrollbar :)"),
+			container.NewHBox(button[0], button[1], button[2], button[3]),
+		),
 		nil,
 		nil,
 		nil,
-		container.NewStack(c1, c2, c3, c4),
+		container.NewStack(table[0], table[1], table[2], table[3]),
 	)
 	w.SetContent(content)
 
@@ -64,60 +73,68 @@ func main() {
 var template string = "Cell 000, 000"
 var width, height int = 150, 500
 
-func top() *widget.Table {
-	t := widget.NewTable(
-		func() (int, int) { return 1, width - 1 },
-		func() fyne.CanvasObject {
+func top(mode int) *widget.Table {
+	switch mode {
+	case 0, 1:
+		length := func() (int, int) { return 1, width }
+		create := func() fyne.CanvasObject {
 			return widget.NewLabel(template)
-		},
-		func(id widget.TableCellID, cell fyne.CanvasObject) {
+		}
+		update := func(id widget.TableCellID, cell fyne.CanvasObject) {
 			label := cell.(*widget.Label)
 			label.TextStyle.Bold = true
 			label.Alignment = fyne.TextAlignCenter
-			label.SetText(fmt.Sprintf("Column %d", id.Col+2))
-		})
-	return t
+			label.SetText(fmt.Sprintf("Header %d", id.Col+1))
+		}
+		return widget.NewTable(length, create, update)
+	}
+	return nil
 }
 
-func left() *widget.Table {
-	t := widget.NewTable(
-		func() (int, int) { return height, 1 },
-		func() fyne.CanvasObject {
+func left(mode int) *widget.Table {
+	switch mode {
+	case 0, 2:
+		length := func() (int, int) { return height, 1 }
+		create := func() fyne.CanvasObject {
 			return widget.NewLabel(template)
-		},
-		func(id widget.TableCellID, cell fyne.CanvasObject) {
+		}
+		update := func(id widget.TableCellID, cell fyne.CanvasObject) {
 			label := cell.(*widget.Label)
 			label.TextStyle.Bold = true
 			label.Alignment = fyne.TextAlignCenter
 			label.SetText(fmt.Sprintf("Row %d", id.Row+1))
-		})
-	return t
+		}
+		return widget.NewTable(length, create, update)
+	}
+	return nil
 }
 
-func joint() *widget.Table {
-	t := widget.NewTable(
-		func() (int, int) { return 1, 1 },
-		func() fyne.CanvasObject {
+func joint(mode int) *widget.Table {
+	switch mode {
+	case 0:
+		length := func() (int, int) { return 1, 1 }
+		create := func() fyne.CanvasObject {
 			return widget.NewLabel(template)
-		},
-		func(id widget.TableCellID, cell fyne.CanvasObject) {
+		}
+		update := func(id widget.TableCellID, cell fyne.CanvasObject) {
 			label := cell.(*widget.Label)
 			label.TextStyle.Bold = true
 			label.Alignment = fyne.TextAlignCenter
-			label.SetText("Column 1")
-		})
-	return t
+			label.SetText("Row/Header")
+		}
+		return widget.NewTable(length, create, update)
+	}
+	return nil
 }
 
-func data() *widget.Table {
-	t := widget.NewTable(
-		func() (int, int) { return height, width - 1 },
-		func() fyne.CanvasObject {
-			return widget.NewLabel(template)
-		},
-		func(id widget.TableCellID, cell fyne.CanvasObject) {
-			label := cell.(*widget.Label)
-			label.SetText(fmt.Sprintf("Cell %d, %d", id.Row+1, id.Col+2))
-		})
-	return t
+func data(mode int) *widget.Table {
+	length := func() (int, int) { return height, width }
+	create := func() fyne.CanvasObject {
+		return widget.NewLabel(template)
+	}
+	update := func(id widget.TableCellID, cell fyne.CanvasObject) {
+		label := cell.(*widget.Label)
+		label.SetText(fmt.Sprintf("Cell %d, %d", id.Row+1, id.Col+1))
+	}
+	return widget.NewTable(length, create, update)
 }
