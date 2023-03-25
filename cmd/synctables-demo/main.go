@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"synctables/pkg/borderedtable"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -10,53 +11,35 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
+var selectItems = []string{"Header and First column", "Header", "First column", "Plain"}
+
 func main() {
 	a := app.New()
 	w := a.NewWindow("Table scroll synchronisation demo")
 
-	buttonName := []string{"Header and First column", "Header", "First column", "Plain"}
-	table := []*BorderedTable{}
-	for i := 0; i < len(buttonName); i++ {
-		table = append(table, NewBoderedTable(top(i), left(i), joint(i), data(i)))
-		if i != 0 {
+	table := []*borderedtable.BorderedTable{}
+	for i := 0; i < len(selectItems); i++ {
+		table = append(table, borderedtable.NewBoderedTable(top(i), left(i), joint(i), data(i)))
+		table[i].Hide()
+	}
+
+	selectInput := widget.NewSelect(selectItems, func(s string) {
+		j := 0
+		for i := 0; i < len(selectItems); i++ {
+			if selectItems[i] == s {
+				j = i
+			}
 			table[i].Hide()
 		}
-	}
-	funcs := []func(){}
-	funcs = append(funcs, func() {
-		table[0].Show()
-		table[1].Hide()
-		table[2].Hide()
-		table[3].Hide()
+		table[j].Show()
 	})
-	funcs = append(funcs, func() {
-		table[0].Hide()
-		table[1].Show()
-		table[2].Hide()
-		table[3].Hide()
-	})
-	funcs = append(funcs, func() {
-		table[0].Hide()
-		table[1].Hide()
-		table[2].Show()
-		table[3].Hide()
-	})
-	funcs = append(funcs, func() {
-		table[0].Hide()
-		table[1].Hide()
-		table[2].Hide()
-		table[3].Show()
-	})
-	button := []*widget.Button{}
-	for i := 0; i < len(buttonName); i++ {
-		button = append(button,
-			widget.NewButton(buttonName[i], funcs[i]))
-	}
+	selectInput.Selected = selectItems[0]
+	table[0].Show()
 
 	content := container.NewBorder(
 		container.NewVBox(
 			widget.NewLabel("To see the Fyne magic just choose layout and pull scrollbar :)"),
-			container.NewHBox(button[0], button[1], button[2], button[3]),
+			selectInput,
 		),
 		nil,
 		nil,

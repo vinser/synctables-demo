@@ -1,4 +1,4 @@
-package main
+package borderedtable
 
 import (
 	"fyne.io/fyne/v2"
@@ -8,14 +8,20 @@ import (
 // Declare conformity with Layout interface
 var _ fyne.Layout = (*boderedTableLayout)(nil)
 
+// Layout for bordered table widget
 type boderedTableLayout struct {
 	top, left, joint, data fyne.CanvasObject
 }
 
+// NewBorderedTableLayout creates a new borderedTableLayout instance with top, left, joint
+// and data objects set.
 func NewBorderedTableLayout(top, left, joint, data fyne.CanvasObject) fyne.Layout {
 	return &boderedTableLayout{top, left, joint, data}
 }
 
+// Layout is called to pack all child objects into a specified size.
+// For borderTableLayout this arranges the top header, left column, joint cell table widgets at
+// the sides and table widget with data is maximised in the rest of the space.
 func (l *boderedTableLayout) Layout(o []fyne.CanvasObject, size fyne.Size) {
 	jointSize := fyne.Size{Width: 0, Height: 0}
 	switch {
@@ -46,6 +52,11 @@ func (l *boderedTableLayout) Layout(o []fyne.CanvasObject, size fyne.Size) {
 	}
 }
 
+// MinSize finds the smallest size that satisfies all the child objects.
+// For borderTableLayout this is determined by the MinSize height of the hader and
+// plus the MinSize width of the left column, plus MinSize width of the joint cell
+// and table data, plus any padding needed.
+// This is then added to the union of the MinSize for any remaining content.
 func (l *boderedTableLayout) MinSize(o []fyne.CanvasObject) fyne.Size {
 	minSize := fyne.Size{Width: 0, Height: 0}
 	if l.data != nil && l.data.Visible() {

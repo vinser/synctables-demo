@@ -1,4 +1,4 @@
-package main // import "fyne.io/fyne/v2/container"
+package borderedtable
 
 import (
 	"fyne.io/fyne/v2"
@@ -6,11 +6,13 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-type TableHeader struct{}
-
 // Declare conformity with Widget interface.
 var _ fyne.Widget = (*BorderedTable)(nil)
 
+// Bordered table widget contains table data along with optional header and fixed first column and joint cell
+// It provides synchronous table data scrolling with a header and a fixed column.
+//
+// Since: 2.3
 type BorderedTable struct {
 	widget.BaseWidget
 
@@ -20,6 +22,9 @@ type BorderedTable struct {
 	data  *widget.Table
 }
 
+// NewBoderedTable creates a new Bordered table widget with the specified objects and using the bordered table layout.
+// The top, left, joint and data parameters specify the header, fix left column, joint cell and table data.
+// Nil can be used to top, left and joint if it should not be filled. The data parameter is mandatoty.
 func NewBoderedTable(top, left, joint, data *widget.Table) *BorderedTable {
 	if data == nil {
 		fyne.LogError("Missing data", nil)
@@ -62,6 +67,9 @@ func NewBoderedTable(top, left, joint, data *widget.Table) *BorderedTable {
 	return t
 }
 
+// CreateRenderer is a private method to Fyne which links this widget to its renderer
+//
+// Implements: fyne.Widget
 func (t *BorderedTable) CreateRenderer() fyne.WidgetRenderer {
 	nv := func(t *widget.Table, o []fyne.CanvasObject) (fyne.CanvasObject, []fyne.CanvasObject) {
 		if t != nil {
@@ -82,6 +90,7 @@ func (t *BorderedTable) CreateRenderer() fyne.WidgetRenderer {
 	}
 }
 
+// Declare conformity with WidgetRenderer interface.
 var _ fyne.WidgetRenderer = (*boderedTableRenderer)(nil)
 
 type boderedTableRenderer struct {
