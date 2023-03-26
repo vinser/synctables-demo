@@ -1,8 +1,8 @@
 # synctables-demo
 Fyne GUI tables scroll synchronization demo
 
-
-/assets/synctables-demo.mp4
-
-`go run .\cmd\synctables-demo\`
+<video>
+<source type="video/mp4" src="/assets/synctables-demo.mp4">
+</video>
+`go run ./cmd/synctables-demo/`
 
