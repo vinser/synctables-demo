@@ -11,12 +11,12 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var selectItems = []string{"Header and First column", "Header", "First column", "Plain"}
-
 func main() {
+
 	a := app.New()
 	w := a.NewWindow("Table scroll synchronisation demo")
 
+	selectItems := []string{"Header and First column", "Header", "First column", "Plain"}
 	table := []*borderedtable.BorderedTable{}
 	for i := 0; i < len(selectItems); i++ {
 		table = append(table, borderedtable.NewBoderedTable(top(i), left(i), joint(i), data(i)))
@@ -24,23 +24,18 @@ func main() {
 	}
 
 	selectInput := widget.NewSelect(selectItems, func(s string) {
-		j := 0
 		for i := 0; i < len(selectItems); i++ {
 			if selectItems[i] == s {
-				j = i
+				table[i].Show()
+			} else {
+				table[i].Hide()
 			}
-			table[i].Hide()
 		}
-		table[j].Show()
 	})
-	selectInput.Selected = selectItems[0]
-	table[0].Show()
-
+	selectInput.Alignment = fyne.TextAlignCenter
+	selectInput.PlaceHolder = "To see the Fyne magic just choose layout and scroll"
 	content := container.NewBorder(
-		container.NewVBox(
-			widget.NewLabel("To see the Fyne magic just choose layout and pull scrollbar :)"),
-			selectInput,
-		),
+		selectInput,
 		nil,
 		nil,
 		nil,
@@ -48,7 +43,7 @@ func main() {
 	)
 	w.SetContent(content)
 
-	w.Resize(fyne.NewSize(1000, 500))
+	w.Resize(fyne.NewSize(500, 250))
 	w.CenterOnScreen()
 	w.ShowAndRun()
 }
